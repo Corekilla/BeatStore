@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* ── Dark theme color system ── */
+  --background: #0a0a0a;
+  --surface: #141414;
+  --surface-2: #1e1e1e;
+  --border: #2a2a2a;
+  --accent: #e8ff47;        /* electric yellow-green */
+  --accent-dim: #b8cc30;
+  --text: #f0f0f0;
+  --muted: #6b6b6b;
+
+  /* ── Typography ── */
+  --font-display: 'DM Serif Display', serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text);
+  font-family: var(--font-body);
+}
+
+/* ── Scrollbar ────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--background); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* ── Selection ────────────────────────────────────────────────────────────── */
+::selection {
+  background: var(--accent);
+  color: var(--background);
+}
+
+/* ── Focus ring ───────────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ── Utility classes ──────────────────────────────────────────────────────── */
+@layer utilities {
+  .text-accent { color: var(--accent); }
+  .bg-surface { background-color: var(--surface); }
+  .bg-surface-2 { background-color: var(--surface-2); }
+  .border-border { border-color: var(--border); }
+
+  .font-display { font-family: var(--font-display); }
+  .font-mono { font-family: var(--font-mono); }
+
+  .btn-primary {
+    @apply bg-[var(--accent)] text-[var(--background)] font-semibold px-6 py-3 rounded-sm
+           transition-all duration-200 hover:bg-[var(--accent-dim)] active:scale-95
+           cursor-pointer select-none;
+  }
+
+  .btn-ghost {
+    @apply border border-[var(--border)] text-[var(--text)] px-6 py-3 rounded-sm
+           transition-all duration-200 hover:border-[var(--accent)] hover:text-[var(--accent)]
+           cursor-pointer select-none;
+  }
+
+  .card {
+    @apply bg-[var(--surface)] border border-[var(--border)] rounded-sm;
+  }
+
+  /* Waveform bars for playing indicator */
+  .waveform-bar {
+    @apply inline-block w-[3px] bg-[var(--accent)] rounded-full;
+    animation: waveform 1.2s ease-in-out infinite;
+  }
+  .waveform-bar:nth-child(2) { animation-delay: 0.2s; }
+  .waveform-bar:nth-child(3) { animation-delay: 0.4s; }
+  .waveform-bar:nth-child(4) { animation-delay: 0.1s; }
+  .waveform-bar:nth-child(5) { animation-delay: 0.3s; }
+}
+
+@keyframes waveform {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}

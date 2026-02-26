@@ -1,0 +1,50 @@
+import type { Config } from 'tailwindcss'
+
+const config: Config = {
+  content: [
+    './pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  theme: {
+    extend: {
+      colors: {
+        background: 'var(--background)',
+        surface: 'var(--surface)',
+        border: 'var(--border)',
+        accent: 'var(--accent)',
+        'accent-dim': 'var(--accent-dim)',
+        text: 'var(--text)',
+        muted: 'var(--muted)',
+      },
+      fontFamily: {
+        display: ['var(--font-display)', 'serif'],
+        body: ['var(--font-body)', 'sans-serif'],
+        mono: ['var(--font-mono)', 'monospace'],
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.4s ease forwards',
+        'slide-up': 'slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'waveform': 'waveform 1.2s ease-in-out infinite',
+      },
+      keyframes: {
+        fadeIn: {
+          from: { opacity: '0' },
+          to: { opacity: '1' },
+        },
+        slideUp: {
+          from: { opacity: '0', transform: 'translateY(20px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+        waveform: {
+          '0%, 100%': { transform: 'scaleY(0.4)' },
+          '50%': { transform: 'scaleY(1)' },
+        },
+      },
+    },
+  },
+  plugins: [],
+}
+
+export default config
