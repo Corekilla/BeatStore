@@ -9,14 +9,19 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: 'var(--background)',
-        surface: 'var(--surface)',
-        border: 'var(--border)',
-        accent: 'var(--accent)',
-        'accent-dim': 'var(--accent-dim)',
-        text: 'var(--text)',
-        muted: 'var(--muted)',
-      },
+      background: 'var(--background)',
+      surface: {
+      DEFAULT: 'var(--surface)',
+      2: 'var(--surface-2)',
+     },
+  border: 'var(--border)',
+  accent: {
+    DEFAULT: 'var(--accent)',
+    dim: 'var(--accent-dim)',
+  },
+  text: 'var(--text)',
+  muted: 'var(--muted)',
+},
       fontFamily: {
         display: ['var(--font-display)', 'serif'],
         body: ['var(--font-body)', 'sans-serif'],

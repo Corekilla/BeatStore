@@ -26,5 +26,22 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
-  return NextResponse.json({ beats: data })
+  const mapped = (data ?? []).map((b: any) => ({
+  id: b.id,
+  title: b.title,
+  slug: b.slug,
+  bpm: b.bpm,
+  key: b.key,
+  genre: b.genre,
+  mood: b.mood,
+  tags: b.tags,
+  previewUrl: b.preview_url,
+  coverArt: b.cover_art,
+  plays: b.plays,
+  featured: b.featured,
+  exclusiveSold: b.exclusive_sold,
+  createdAt: b.created_at,
+}))
+
+return NextResponse.json({ beats: mapped })
 }

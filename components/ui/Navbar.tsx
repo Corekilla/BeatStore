@@ -11,7 +11,7 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="font-display text-2xl tracking-tight">
-          BEAT<span className="text-accent">STORE</span>
+          <img className="h-8 w-auto" src="https://eazzxszzohxmydikdwre.supabase.co/storage/v1/object/public/previews/coreNoReflectStampSm.png" alt="" />
         </Link>
 
         {/* Nav links */}

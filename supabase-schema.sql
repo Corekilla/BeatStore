@@ -6,7 +6,7 @@ create table public.beats (
   id            uuid primary key default gen_random_uuid(),
   title         text not null,
   slug          text unique not null,
-  producer      text not null default 'Producer',
+  producer      text not null default 'Corekilla',
   bpm           integer not null,
   key           text not null,
   genre         text not null,
