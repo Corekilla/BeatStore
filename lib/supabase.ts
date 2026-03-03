@@ -1,6 +1,7 @@
 import { createBrowserClient } from '@supabase/ssr'
 import { createClient } from '@supabase/supabase-js'
-import type { Database } from '@/types'
+import { Database } from '@/types/database'
+
 
 // ─── Browser client (use in components) ──────────────────────────────────────
 export function createSupabaseBrowserClient() {

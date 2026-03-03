@@ -12,7 +12,7 @@ interface BeatCardProps {
 
 export function BeatCard({ beat }: BeatCardProps) {
   const [isPlaying, setIsPlaying] = useState(false)
-  const [selectedLicense, setSelectedLicense] = useState<'mp3_lease' | 'wav_lease' | 'trackout' | 'exclusive'>('wav_lease')
+  const [selectedLicense, setSelectedLicense] = useState<'mp3_lease' | 'exclusive'>('mp3_lease')
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const addItem = useCart((s) => s.addItem)
   const cartItems = useCart((s) => s.items)
@@ -101,7 +101,7 @@ export function BeatCard({ beat }: BeatCardProps) {
 
         {/* License selector */}
         <div className="flex gap-1 mb-3 flex-wrap">
-          {(['mp3_lease', 'wav_lease', 'trackout', 'exclusive'] as const).map((type) => {
+          {(['mp3_lease', 'exclusive'] as const).map((type) => {
             const l = getLicense(type)
             return (
               <button

@@ -1,6 +1,6 @@
 // ─── Beat & Licensing ────────────────────────────────────────────────────────
 
-export type LicenseType = 'mp3_lease' | 'wav_lease' | 'trackout' | 'exclusive'
+export type LicenseType = 'mp3_lease' | 'exclusive'
 
 export interface License {
   type: LicenseType
