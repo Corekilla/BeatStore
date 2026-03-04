@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import type { Beat } from '@/types'
 import { BeatCard } from './BeatCard'
 
-const GENRES = ['All', 'Trap', 'Drill', 'R&B', 'Pop', 'Hip-Hop', 'Afrobeats', 'Boom Bap']
+const GENRES = ['All', 'Trap', 'Hyper Trap', 'Rage', 'Boom Bap']
 
 export function BeatCatalog() {
   const [beats, setBeats] = useState<Beat[]>([])

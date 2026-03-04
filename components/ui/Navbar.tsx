@@ -15,10 +15,10 @@ export function Navbar() {
         </Link>
 
         {/* Nav links */}
-        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[var(--muted)]">
-          <Link href="/" className="hover:text-[var(--text)] transition-colors">Catalog</Link>
-          <Link href="/licenses" className="hover:text-[var(--text)] transition-colors">Licensing</Link>
-          <Link href="/about" className="hover:text-[var(--text)] transition-colors">About</Link>
+        <div className="flex items-center gap-2 md:gap-8 text-xs md:text-sm font-medium text-[var(--muted)]">
+          <Link href="/" className="hover:text-[var(--text)] transition-colors whitespace-nowrap">Catalog</Link>
+          <Link href="/licensing" className="hover:text-[var(--text)] transition-colors whitespace-nowrap">Licensing</Link>
+          <Link href="/about" className="hover:text-[var(--text)] transition-colors whitespace-nowrap">About</Link>
         </div>
 
         {/* Cart */}
