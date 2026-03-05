@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { sendOrderConfirmation } from '@/lib/email'
 import { stripe } from "@/lib/stripe";
 import { createSupabaseAdminClient } from "@/lib/supabase";
 import Stripe from "stripe";
@@ -68,6 +69,16 @@ export async function POST(req: NextRequest) {
       .from("orders")
       .update({ status: "paid", items: itemsWithDownloads })
       .eq("stripe_session_id", session.id);
+    
+    // Send order confirmation email
+    const customerEmail = session.customer_details?.email
+    if (customerEmail) {
+      await sendOrderConfirmation(
+        customerEmail,
+        itemsWithDownloads,
+        session.amount_total ?? 0
+      )
+    }
 
     // If any exclusive licenses were purchased, mark beats as sold
     const exclusivePurchases = rawItems.filter(

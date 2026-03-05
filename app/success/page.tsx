@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Navbar } from '@/components/ui/Navbar'
+import { Footer } from '@/components/ui/Footer'
 import { useCart } from '@/lib/cart-store'
 
 interface OrderItem {
@@ -59,6 +60,9 @@ export default function SuccessPage() {
               Download links have been sent to <strong className="text-text">{order?.email}</strong>.
               They're also available below for the next 7 days.
             </p>
+            <p className="text-xs text-[var(--accent)] mt-1 mb-1">
+               Don't see the email? Check your spam folder and mark it as "not spam".
+            </p>
 
             {order?.items && (
               <div className="card divide-y divide-[var(--border)] text-left mb-8">
@@ -90,6 +94,7 @@ export default function SuccessPage() {
           </>
         )}
       </div>
+      <Footer />
     </>
   )
 }

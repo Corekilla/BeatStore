@@ -1,6 +1,7 @@
 'use client'
 
 import { Navbar } from "@/components/ui/Navbar"
+import { Footer } from '@/components/ui/Footer'
 
 
 const licenses = [
@@ -287,6 +288,7 @@ export default function LicensingPage() {
 
       </div>
     </main>
+    <Footer />
     </>
   )
 }

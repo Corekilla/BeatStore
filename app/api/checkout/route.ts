@@ -4,13 +4,14 @@ import { createSupabaseAdminClient } from '@/lib/supabase'
 import type { CartItem } from '@/types'
 
 export async function POST(req: NextRequest) {
-  const { items, email }: { items: CartItem[]; email?: string } = await req.json()
+  const { items, email, marketingOptIn }: { items: CartItem[]; email?: string; marketingOptIn?: boolean } = await req.json()
 
   if (!items || items.length === 0) {
     return NextResponse.json({ error: 'Cart is empty' }, { status: 400 })
   }
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL
+  const supabase = createSupabaseAdminClient()
 
   try {
     // Create Stripe checkout session
@@ -33,8 +34,14 @@ export async function POST(req: NextRequest) {
       },
     })
 
+    // Save marketing opt-in
+    if (marketingOptIn && email) {
+      await supabase
+        .from('email_subscribers')
+        .upsert({ email }, { onConflict: 'email' })
+    }
+
     // Create a pending order in Supabase
-    const supabase = createSupabaseAdminClient()
     await supabase.from('orders').insert({
       email: email ?? '',
       stripe_session_id: session.id,

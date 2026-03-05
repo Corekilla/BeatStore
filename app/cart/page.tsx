@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Navbar } from '@/components/ui/Navbar'
+import { Footer } from '@/components/ui/Footer'
 import { useCart } from '@/lib/cart-store'
 import { formatPrice } from '@/lib/utils'
 import { LICENSE_DEFINITIONS } from '@/lib/licenses'
@@ -12,8 +13,11 @@ export default function CartPage() {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [agreed, setAgreed] = useState(false)
+  const [marketingOptIn, setMarketingOptIn] = useState(true)
 
   const handleCheckout = async () => {
+    if (!agreed) { setError('Please agree to the licensing terms.'); return }
     if (!email) { setError('Please enter your email.'); return }
     setLoading(true)
     setError('')
@@ -43,6 +47,7 @@ export default function CartPage() {
           <p className="text-[var(--muted)] mb-8">No beats in your cart yet.</p>
           <a href="/" className="btn-primary inline-block">Browse Beats</a>
         </div>
+        <Footer />
       </>
     )
   }
@@ -148,9 +153,46 @@ export default function CartPage() {
 
             {error && <p className="text-red-400 text-xs mb-3">{error}</p>}
 
+            {/* Licensing agreement */}
+            <div className="flex items-start gap-3 mb-4">
+              <input
+                type="checkbox"
+                id="license-agree"
+                checked={agreed}
+                onChange={(e) => setAgreed(e.target.checked)}
+                className="mt-0.5 accent-[var(--accent)] cursor-pointer"
+              />
+              <label htmlFor="license-agree" className="text-xs text-[var(--muted)] leading-relaxed cursor-pointer">
+                I agree to the{' '}
+                <a href="/licensing" target="_blank" className="text-accent underline hover:text-white transition-colors">
+                  licensing terms
+                </a>
+                {' '}for each beat purchased. I understand these are non-refundable digital goods.{' '}
+                View our{' '}
+                <a href="/privacy-policy" target="_blank" className="text-accent underline hover:text-white transition-colors">
+                  privacy policy
+                </a>.
+              </label>
+            </div>
+
+            {/* Marketing opt-in */}
+            <div className="flex items-start gap-3 mb-4">
+              <input
+                type="checkbox"
+                id="marketing-opt-in"
+                checked={marketingOptIn}
+                onChange={(e) => setMarketingOptIn(e.target.checked)}
+                className="mt-0.5 accent-[var(--accent)] cursor-pointer"
+              />
+              <label htmlFor="marketing-opt-in" className="text-xs text-[var(--muted)] leading-relaxed cursor-pointer">
+                Keep me updated with exclusive discounts, free downloads, and new beat drops.
+              </label>
+            </div>
+
             <button
+            
               onClick={handleCheckout}
-              disabled={loading}
+              disabled= {loading || !agreed}
               className="w-full btn-primary text-sm uppercase tracking-wider disabled:opacity-60"
             >
               {loading ? 'Redirecting...' : 'Checkout with Stripe'}
@@ -165,6 +207,7 @@ export default function CartPage() {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   )
 }

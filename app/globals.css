@@ -14,7 +14,7 @@
   --muted: #6b6b6b;
 
   /* ── Typography ── */
-  --font-display: 'Calibri', serif;
+  --font-display: -apple-system, BlinkMacSystemFont, 'calibri', serif;
   --font-body: 'DM Sans', sans-serif;
   --font-mono: 'DM Mono', monospace;
 }
