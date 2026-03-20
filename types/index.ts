@@ -27,7 +27,10 @@ export interface Beat {
   licenses: License[]
   plays: number
   featured: boolean
+  hasVocals: boolean
+  leasesSold: number
   createdAt: string
+  displayPlays: number
 }
 
 // ─── Cart ────────────────────────────────────────────────────────────────────

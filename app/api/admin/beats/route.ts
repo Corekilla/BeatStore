@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
 
   // 2. Parse the request body
   const body = await req.json()
-  const { title, slug, bpm, key, genre, mood, tags, coverUrl, previewUrl, beatId } = body
+  const { title, slug, bpm, key, genre, mood, tags, coverUrl, previewUrl, beatId, has_vocals } = body
 
   const supabase = createSupabaseAdminClient()
 
@@ -57,6 +57,7 @@ export async function POST(req: NextRequest) {
       genre,
       mood,
       tags,
+      has_vocals: has_vocals ?? false,
       preview_url: '',
       cover_art: '',
     })

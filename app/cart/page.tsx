@@ -10,6 +10,7 @@ import type { LicenseType } from '@/types'
 
 export default function CartPage() {
   const { items, removeItem, updateLicense, clearCart, total } = useCart()
+  const hasVocalBeat = items.some(({ beat }) => beat.hasVocals)
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -186,6 +187,7 @@ export default function CartPage() {
               />
               <label htmlFor="marketing-opt-in" className="text-xs text-[var(--muted)] leading-relaxed cursor-pointer">
                 Keep me updated with exclusive discounts, free downloads, and new beat drops.
+                {hasVocalBeat && <span className="text-red-400"> Vocals not included.</span>}
               </label>
             </div>
 

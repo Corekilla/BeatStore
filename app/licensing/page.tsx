@@ -263,7 +263,7 @@ export default function LicensingPage() {
               },
               {
                 q: 'Do I need to credit the producer?',
-                a: 'Yes for leases — use "Prod. by Corekilla" in your song title or description. Exclusive buyers can optionally drop the credit.',
+                a: 'Yes, for leases use "Prod. by Corekilla" in your song title or description. Exclusive buyers can optionally drop the credit.',
               },
               {
                 q: 'What if I outgrow my lease?',
@@ -271,7 +271,7 @@ export default function LicensingPage() {
               },
               {
                 q: 'Can I use leased beats on YouTube?',
-                a: 'Yes — MP3 leases cover up to 1 music video and 100K streams which includes YouTube plays.',
+                a: 'Yes, MP3 leases cover up to 1 music video and 100K streams which includes YouTube plays.',
               },
               {
                 q: 'What does exclusive mean exactly?',

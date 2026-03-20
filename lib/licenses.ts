@@ -48,7 +48,6 @@ export const LICENSE_DEFINITIONS: Record<LicenseType, Omit<License, 'stripeProdu
     price: 49900, // $499.00
     description: 'Full ownership — beat removed from store',
     features: [
-      'All stem tracks (WAV)',
       'MP3 included',
       'Unlimited streams & sales',
       'Full exclusive rights',

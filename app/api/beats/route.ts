@@ -9,6 +9,7 @@ export async function GET(req: NextRequest) {
   const bpmMax = searchParams.get('bpmMax')
   const search = searchParams.get('q')
   const featured = searchParams.get('featured')
+  
 
   const supabase = createSupabaseAdminClient()
 
@@ -27,6 +28,8 @@ export async function GET(req: NextRequest) {
     if (bpmMax) query = query.lte('bpm', parseInt(bpmMax))
     if (featured === 'true') query = query.eq('featured', true)
     query = query.eq('exclusive_sold', false)
+    const vocals = searchParams.get('vocals')
+    if (vocals === 'true') query = query.eq('has_vocals', true)
 
     const result = await query
     data = result.data
@@ -48,10 +51,13 @@ export async function GET(req: NextRequest) {
     tags: b.tags,
     previewUrl: b.preview_url,
     coverArt: b.cover_art,
-    plays: b.plays,
+    leasesSold: b.leases_sold,
+    plays: b.plays ?? 0,
     featured: b.featured,
     exclusiveSold: b.exclusive_sold,
+    hasVocals: b.has_vocals,
     createdAt: b.created_at,
+    displayPlays: b.display_plays ?? 0,
   }))
 
   return NextResponse.json({ beats: mapped })

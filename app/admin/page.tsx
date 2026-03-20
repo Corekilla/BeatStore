@@ -18,6 +18,7 @@ export default function AdminPage() {
   const [previewFile, setPreviewFile] = useState<File | null>(null)
   const [beatFile, setBeatFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
+  const [hasVocals, setHasVocals] = useState(false)
   const [message, setMessage] = useState('')
 
   useEffect(() => {
@@ -53,6 +54,7 @@ export default function AdminPage() {
           genre,
           mood: mood.split(',').map((m) => m.trim()).filter(Boolean),
           tags: tags.split(',').map((t) => t.trim()).filter(Boolean),
+          has_vocals: hasVocals,
         }),
       })
 
@@ -204,6 +206,19 @@ export default function AdminPage() {
               className="w-full bg-surface border border-border rounded px-3 py-2 text-sm text-text focus:outline-none focus:border-accent"
               placeholder="trap, 808, dark"
             />
+          </div>
+
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="has-vocals"
+              checked={hasVocals}
+              onChange={(e) => setHasVocals(e.target.checked)}
+              className="accent-[var(--accent)]"
+            />
+            <label htmlFor="has-vocals" className="text-sm text-muted">
+              Beat has vocals
+            </label>
           </div>
 
           <div>

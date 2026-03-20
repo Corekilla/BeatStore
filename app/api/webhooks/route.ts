@@ -90,9 +90,19 @@ export async function POST(req: NextRequest) {
         .update({ exclusive_sold: true, featured: false })
         .eq("id", purchase.beatId);
     }
+    // Increment leases_sold for non-exclusive purchases
+    const leasePurchases = rawItems.filter(
+      (i: { licenseType: string }) => i.licenseType !== 'exclusive'
+    )
+    for (const purchase of leasePurchases) {
+      await supabase.rpc('increment_leases_sold', { beat_id: purchase.beatId })
+    }
+      
+    
 
     // Increment play counts / purchase counts could also go here
   }
+  
 
   if (event.type === "checkout.session.expired") {
     const session = event.data.object as Stripe.Checkout.Session;

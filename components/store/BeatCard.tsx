@@ -1,8 +1,10 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import type { Beat } from '@/types'
 import { useCart } from '@/lib/cart-store'
+import { usePlayer } from '@/lib/player-store'
+import { usePlays } from '@/lib/plays-store'
 import { getLicense } from '@/lib/licenses'
 import { formatPrice, formatNumber } from '@/lib/utils'
 
@@ -11,26 +13,51 @@ interface BeatCardProps {
 }
 
 export function BeatCard({ beat }: BeatCardProps) {
-  const [isPlaying, setIsPlaying] = useState(false)
   const [selectedLicense, setSelectedLicense] = useState<'mp3_lease' | 'exclusive'>('mp3_lease')
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const addItem = useCart((s) => s.addItem)
   const cartItems = useCart((s) => s.items)
+  const { currentBeatId, setCurrentBeatId } = usePlayer()
+  const { counts, initBeat, boostBeat } = usePlays()
 
   const inCart = cartItems.some((i) => i.beat.id === beat.id)
   const license = getLicense(selectedLicense)
+  const isPlaying = currentBeatId === beat.id
+
+  useEffect(() => {
+    initBeat(beat.id, beat.plays, beat.displayPlays)
+  }, [beat.id, beat.plays, beat.displayPlays])
+
+  useEffect(() => {
+    if (currentBeatId !== beat.id && audioRef.current) {
+      audioRef.current.pause()
+    }
+  }, [currentBeatId, beat.id])
+  
+  useEffect(() => {
+  initBeat(beat.id, beat.plays, beat.displayPlays)
+}, [beat.id, beat.plays, beat.displayPlays])
+
+  const displayedPlays = counts[beat.id] ?? beat.plays
 
   const togglePlay = () => {
     if (!audioRef.current) {
       audioRef.current = new Audio(beat.previewUrl)
-      audioRef.current.onended = () => setIsPlaying(false)
+      audioRef.current.onended = () => setCurrentBeatId(null)
     }
+
     if (isPlaying) {
       audioRef.current.pause()
-      setIsPlaying(false)
+      setCurrentBeatId(null)
     } else {
       audioRef.current.play()
-      setIsPlaying(true)
+      setCurrentBeatId(beat.id)
+      boostBeat(beat.id)
+      fetch('/api/beats/play', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ beatId: beat.id }),
+      })
     }
   }
 
@@ -89,10 +116,25 @@ export function BeatCard({ beat }: BeatCardProps) {
       <div className="p-4">
         <div className="flex items-start justify-between mb-2">
           <div>
-            <h3 className="font-display text-lg leading-tight">{beat.title}</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="font-display text-lg leading-tight">{beat.title}</h3>
+              {beat.hasVocals && (
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="flex-shrink-0 mt-1" style={{color: 'var(--accent)'}}>
+                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                  <line x1="12" y1="19" x2="12" y2="23"/>
+                  <line x1="8" y1="23" x2="16" y2="23"/>
+                </svg>
+              )}
+            </div>
             <p className="text-xs text-[var(--muted)] mt-0.5 font-mono">
               {beat.bpm} BPM · {beat.key} · {beat.genre}
             </p>
+            {beat.leasesSold > 0 && (
+              <p className="text-[10px] font-mono text-red-500 mt-0.5">
+                ⚠ {beat.leasesSold} lease{beat.leasesSold > 1 ? 's' : ''} sold — exclusives may have limitations
+              </p>
+            )}
           </div>
           <div className="text-right">
             <p className="text-accent font-mono font-medium text-sm">{formatPrice(license.price)}</p>
@@ -134,7 +176,7 @@ export function BeatCard({ beat }: BeatCardProps) {
 
         {/* Plays */}
         <p className="text-[10px] text-[var(--muted)] font-mono mt-2 text-center">
-          {formatNumber(beat.plays)} plays
+          {formatNumber(displayedPlays)} plays
         </p>
       </div>
     </div>
