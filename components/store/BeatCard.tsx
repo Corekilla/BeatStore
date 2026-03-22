@@ -17,7 +17,7 @@ export function BeatCard({ beat }: BeatCardProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const addItem = useCart((s) => s.addItem)
   const cartItems = useCart((s) => s.items)
-  const { currentBeatId, setCurrentBeatId } = usePlayer()
+  const { currentBeatId, setCurrentBeatId, volume } = usePlayer()
   const { counts, initBeat, boostBeat } = usePlays()
 
   const inCart = cartItems.some((i) => i.beat.id === beat.id)
@@ -33,16 +33,18 @@ export function BeatCard({ beat }: BeatCardProps) {
       audioRef.current.pause()
     }
   }, [currentBeatId, beat.id])
-  
+
+  // Sync global volume to this card's audio
   useEffect(() => {
-  initBeat(beat.id, beat.plays, beat.displayPlays)
-}, [beat.id, beat.plays, beat.displayPlays])
+    if (audioRef.current) audioRef.current.volume = volume
+  }, [volume])
 
   const displayedPlays = counts[beat.id] ?? beat.plays
 
   const togglePlay = () => {
     if (!audioRef.current) {
       audioRef.current = new Audio(beat.previewUrl)
+      audioRef.current.volume = volume
       audioRef.current.onended = () => setCurrentBeatId(null)
     }
 
