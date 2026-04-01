@@ -16,22 +16,3 @@ export function getStripe() {
   return stripePromise
 }
 
-// ─── Build line items from cart ───────────────────────────────────────────────
-export function cartItemsToLineItems(items: CartItem[]): Stripe.Checkout.SessionCreateParams.LineItem[] {
-  return items.map((item) => ({
-    price_data: {
-      currency: 'usd',
-      unit_amount: item.license.price, // already in cents
-      product_data: {
-        name: `${item.beat.title} — ${item.license.label}`,
-        description: item.license.description,
-        images: [item.beat.coverArt],
-        metadata: {
-          beatId: item.beat.id,
-          licenseType: item.license.type,
-        },
-      },
-    },
-    quantity: 1,
-  }))
-}
