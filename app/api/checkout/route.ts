@@ -2,13 +2,26 @@ import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { createSupabaseAdminClient } from '@/lib/supabase'
 import { getLicense } from '@/lib/licenses'
+import { checkoutLimiter } from '@/lib/rate-limit'
 import type { CartItem } from '@/types'
 
 export async function POST(req: NextRequest) {
+  // Rate limiting 
+  const ip = req.headers.get('x-forwarded-for') ?? '127.0.0.1'
+  const { success } = await checkoutLimiter.limit(ip)
+  if (!success) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please wait a moment.' },
+      { status: 429 }
+    )
+  }
   const { items, email, marketingOptIn }: { items: CartItem[]; email?: string; marketingOptIn?: boolean } = await req.json()
 
   if (!items || items.length === 0) {
     return NextResponse.json({ error: 'Cart is empty' }, { status: 400 })
+  }
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  return NextResponse.json({ error: 'Invalid email' }, { status: 400 })
   }
 
   //  Look up prices server-side 
@@ -69,7 +82,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ url: session.url })
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Checkout failed'
-    return NextResponse.json({ error: message }, { status: 500 })
+    console.error('[checkout] error:', err)
+    return NextResponse.json({ error: 'Checkout failed. Please try again.' }, { status: 500 })
   }
 }
