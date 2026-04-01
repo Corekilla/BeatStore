@@ -48,12 +48,10 @@ export async function POST(req: NextRequest) {
           const fileType = item.licenseType === "exclusive" ? "mp3_lease" : item.licenseType;
           const filePath = `${item.beatId}/${fileType}.${ext}`;
 
-          console.log('Attempting signed URL for path:', filePath)
 
           const { data, error } = await supabase.storage
             .from("beats")
             .createSignedUrl(filePath, 60 * 60 * 24 * 7); // 7-day expiry
-          console.log('Signed URL result:', JSON.stringify({ data, error: error?.message }))
             
 
           return {

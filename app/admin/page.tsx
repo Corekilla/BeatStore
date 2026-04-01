@@ -22,8 +22,9 @@ export default function AdminPage() {
   const [message, setMessage] = useState('')
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (!data.session) window.location.href = '/admin/login'
+    // ✅ getUser() validates with Supabase servers — not just local cookie
+    supabase.auth.getUser().then(({ data }) => {
+      if (!data.user) window.location.href = '/admin/login'
     })
   }, [])
 
@@ -42,7 +43,6 @@ export default function AdminPage() {
     setMessage('')
 
     try {
-      // 1. Create beat row via API route (server-side, uses service role key)
       const createRes = await fetch('/api/admin/beats', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -63,7 +63,6 @@ export default function AdminPage() {
 
       const beatId = createData.beatId
 
-      // 2. Upload cover art to previews bucket (public)
       const coverExt = coverFile.name.split('.').pop()
       const { error: coverError } = await supabase.storage
         .from('previews')
@@ -74,7 +73,6 @@ export default function AdminPage() {
         .from('previews')
         .getPublicUrl(`${beatId}/cover.${coverExt}`)
 
-      // 3. Upload watermarked preview to previews bucket (public)
       const { error: previewError } = await supabase.storage
         .from('previews')
         .upload(`${beatId}/preview.mp3`, previewFile)
@@ -84,13 +82,11 @@ export default function AdminPage() {
         .from('previews')
         .getPublicUrl(`${beatId}/preview.mp3`)
 
-      // 4. Upload full beat to beats bucket (private)
       const { error: beatError } = await supabase.storage
         .from('beats')
         .upload(`${beatId}/mp3_lease.mp3`, beatFile)
       if (beatError) throw beatError
 
-      // 5. Update beat row with URLs via API route (server-side)
       const updateRes = await fetch('/api/admin/beats', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

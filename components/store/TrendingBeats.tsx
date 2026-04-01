@@ -5,6 +5,7 @@ import type { Beat } from '@/types'
 import { usePlays } from '@/lib/plays-store'
 import { formatNumber } from '@/lib/utils'
 import { usePlayer } from '@/lib/player-store'
+import { connectAudio } from '@/lib/audio-context'
 import { useCart } from '@/lib/cart-store'
 import { getLicense } from '@/lib/licenses'
 
@@ -17,7 +18,7 @@ const RANK_CONFIG = [
 export function TrendingBeats() {
   const [beats, setBeats] = useState<Beat[]>([])
   const { counts } = usePlays()
-  const { currentBeatId, setCurrentBeatId } = usePlayer()
+  const { currentBeatId, setCurrentBeatId, volume } = usePlayer()
   const { addItem, items } = useCart()
   const inCart = (beatId: string) => items.some(({ beat }) => beat.id === beatId)
   const audioRef = useRef<HTMLAudioElement | null>(null)
@@ -39,31 +40,57 @@ export function TrendingBeats() {
     return () => { audioRef.current?.pause() }
   }, [])
 
+  // Sync global volume
+  useEffect(() => {
+    if (audioRef.current) audioRef.current.volume = volume
+  }, [volume])
+
+  // Pause if another beat card takes over
+  useEffect(() => {
+    if (currentBeatId && beats.length > 0) {
+      const isOurBeat = beats.some(b => b.id === currentBeatId)
+      if (!isOurBeat && audioRef.current) {
+        audioRef.current.pause()
+        setIsPaused(false)
+      }
+    }
+  }, [currentBeatId, beats])
 
   const togglePlay = (beat: Beat) => {
     if (currentBeatId === beat.id) {
+      // Same beat — toggle pause/resume
       if (isPaused) {
-        audioRef.current!.currentTime = 0
         audioRef.current!.play()
         setIsPaused(false)
       } else {
         audioRef.current?.pause()
         setIsPaused(true)
       }
-    } 
+    } else {
+      // Different beat — stop current and play new one
+      audioRef.current?.pause()
+      const audio = new Audio()
+      audio.crossOrigin = 'anonymous'
+      audio.src = beat.previewUrl
+      audio.volume = volume
+      audioRef.current = audio
+      try { connectAudio(audio) } catch (e) {}
+      audio.play().catch(() => {})
+      audio.onended = () => {
+        setCurrentBeatId(null)
+        setIsPaused(false)
+      }
+      setCurrentBeatId(beat.id)
+      setIsPaused(false)
+    }
   }
 
   if (beats.length === 0) return null
 
   const maxPlays = Math.max(...beats.map(b => counts[b.id] ?? b.displayPlays ?? b.plays ?? 0))
 
-
   return (
     <div className="flex gap-4 w-full items-start">
-
-     
-
-      {/* Beat list */}
       <div className="flex flex-col gap-2.5 flex-1 min-w-0">
 
         {/* Header */}
@@ -77,8 +104,6 @@ export function TrendingBeats() {
               Trending Now
             </p>
           </div>
-
-          
         </div>
 
         {beats.map((beat, i) => {

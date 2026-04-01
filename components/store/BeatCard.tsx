@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { connectAudio } from '@/lib/audio-context'
 import type { Beat } from '@/types'
 import { useCart } from '@/lib/cart-store'
 import { usePlayer } from '@/lib/player-store'
@@ -43,16 +44,21 @@ export function BeatCard({ beat }: BeatCardProps) {
 
   const togglePlay = () => {
     if (!audioRef.current) {
-      audioRef.current = new Audio(beat.previewUrl)
-      audioRef.current.volume = volume
-      audioRef.current.onended = () => setCurrentBeatId(null)
+      const a = new Audio()
+      a.crossOrigin = 'anonymous'
+      a.src = beat.previewUrl
+      a.volume = volume
+      a.onended = () => setCurrentBeatId(null)
+      audioRef.current = a
     }
 
     if (isPlaying) {
       audioRef.current.pause()
       setCurrentBeatId(null)
     } else {
-      audioRef.current.play()
+      audioRef.current.volume = volume
+      try { connectAudio(audioRef.current) } catch (e) {}
+      audioRef.current.play().catch(() => {})
       setCurrentBeatId(beat.id)
       boostBeat(beat.id)
       fetch('/api/beats/play', {
